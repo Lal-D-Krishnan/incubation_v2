@@ -5,5 +5,4 @@ export const onHandler = (text)=>{
         case 'Signup': return '/signup';
         default: return '#'
     }
-    
 }

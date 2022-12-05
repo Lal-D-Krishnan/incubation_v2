@@ -12,7 +12,6 @@ const userSchema =mongoose.Schema(
         type:String,
         required:true,
         unique:true,
-
     },
     mobile:{
         type:Number,
@@ -48,7 +47,4 @@ userSchema.methods.matchPassword = async function (enteredPassword){
 
 const User =mongoose.model('Users',userSchema)
  
-
-
-
 module.exports = User;

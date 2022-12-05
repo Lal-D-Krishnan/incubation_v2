@@ -1,21 +1,67 @@
 import React, { useContext, useState } from 'react'
 import Button from './Button'
+import axios from 'axios';
+import Swal from "sweetalert2";
+import swal from "sweetalert";
+
 import { AppContext } from '../Context/AppContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { AuthPageContext } from '../Context/AuthPageContext';
+// import HomePage from '../pages/HomePage';
 
 
 const Nav = () => {
+  const { appStatus,setAppstatus}=useContext(AuthPageContext)
+
 
   const { appContext, setAppContext } = useContext(AppContext)
   const navigate =  useNavigate()
 
+  // const [application, showApplication ] = useState(false)
+  // const [status, showStatus ] = useState(false)
+  // const [home, showHome] = useState(false)
 
   let Links = [
     {name:"HOME",link:"/"},
     {name:"APPLY",link:"/application"},
     {name:"STATUS",link:"/"},
-    
   ]
+
+  const onHandler = (text)=>{
+    switch(text){
+        case 'HOME': 
+            navigate('/home')
+            break;
+        case 'APPLY':
+            if (localStorage.getItem('userInfo')) {
+              navigate('/application')
+              // if(appStatus){
+              //   navigate('/status')
+              // }else{
+              //   navigate('/application')
+              // }
+            }else{
+              navigate('/signin')
+            }
+            break;
+        case 'STATUS':
+            if (localStorage.getItem('userInfo')){
+              navigate('/status')
+            }else{
+              navigate('/signin')
+            }
+            break;
+            
+        default: return '#'
+    }
+    }
+
+  // let Linkss = [
+  //   {name:"DASHBOARD",link:"/"},
+  //   {name:"STATUS",link:"/application"},
+  //   {name:"PROFILE",link:"/"},
+    
+  // ]
   
   let [open,setOpen] = useState(false);
   return (
@@ -41,10 +87,11 @@ const Nav = () => {
               Links.map((link)=>(
             
               //  if (localStorage.getItem('userinfo') : " USERNAME"
-                <li key={link.name} className='md:ml-8 
+                <li key={link.name}   className='md:ml-8 
                 text-xl md:my-0 my-7'> 
-                  <a href={link.link} className='text-gray-800
-                   hover:text-gray-400 duration-500'>{link.name}</a>
+                  
+                  <p onClick={()=> onHandler(link.name)}   className='text-gray-800
+                   hover:text-gray-400 duration-500 cursor-pointer'>{link.name}</p>
                 </li>
               ))
             }
@@ -61,8 +108,36 @@ const Nav = () => {
 
               <button className= 'bg-gray-900 text-white font-[Poppins] py-2 px-6 rounded md:ml-8 hover:bg-indigo-400 duration-500'
                   onClick={()=>{
-                    localStorage.removeItem("userInfo");
-                    navigate('/');
+
+                    Swal.fire({
+                      title: "Do you Want to  Logout?",
+                      showDenyButton: true,
+                      confirmButtonText: "yes",
+                      denyButtonText: "No",
+                      customClass: {
+                        actions: "my-actions",
+                        confirmButton: "order-2",
+                        denyButton: "order-3",
+                      },
+                    }).then(async (result) => {
+                      if (result.isConfirmed) {
+                        await axios.get("/logout").then((response) => {
+                          try {
+                            if (response.data.logout) {
+                              localStorage.removeItem("userInfo");
+                              navigate("/");
+                            }
+                          } catch (e) {
+                            swal("error Occured");
+                          }
+                        });
+                
+                        navigate("/");
+                      }
+                    });
+
+                    // localStorage.removeItem("userInfo");
+                    // navigate('/');
                   }}>
                           Logout
                 </button>
@@ -71,6 +146,7 @@ const Nav = () => {
               <>
               <Button text ={'Login'} />
               <Button text ={'Signup'} />
+
               </>
             }
             
@@ -78,6 +154,8 @@ const Nav = () => {
           </ul>
         </div>
       </div>
+
+       <Outlet/> 
     </>
   )
 }

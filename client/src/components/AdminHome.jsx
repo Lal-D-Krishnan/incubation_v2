@@ -3,12 +3,37 @@ import { HiMenuAlt3 } from 'react-icons/hi';
 import { MdOutlineDashboard } from 'react-icons/md';
 import { AiOutlineUser,AiOutlineLogout } from 'react-icons/ai';
 import { FiMessageSquare} from 'react-icons/fi';
-import { Link, useNavigate } from 'react-router-dom';
-import { onHandlerAdmin } from '../utils/onHandlerAdmin';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
+import AdminDash from './AdminDash'
+import AdminSeatingView from './AdminSeatingView';
+import AdminUsers from './AdminUsersView';
+
+import ASubmittedApplications from './ASubmittedApplications';
 
 
 const AdminHome = () => {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
+    
+    const onHandlerAdmin = (text)=>{
+    switch(text){
+        case 'Logout': 
+            localStorage.removeItem('click')
+            navigate('/adminlogin')
+            break;
+        case 'Users':
+            navigate('/admin/user')
+            break;
+        case 'Seating':
+            navigate('/admin/approval-req')
+            break;
+        case 'Dashboard':
+            navigate('/admin/dashboard')
+            break;
+        default: return '#'
+    }
+    }
+
+
 
     useEffect(() => {
         const adminInfo = localStorage.getItem("click");
@@ -31,6 +56,9 @@ const AdminHome = () => {
     ];
 
     const [open,setOpen] = useState(true);
+
+    // const [user,setUser] = useState(false);
+    // const [seating,setSeating] = useState(false);
 
     return (
         <section className='flex gap-6'>
@@ -70,14 +98,26 @@ const AdminHome = () => {
 
             </div>
 
-            <div className='m-3 text-xl text-gray-900 font-semibold sticky'>
-                ADMIN DASHBOARD
-            </div>
+            <div className="flex flex-col w-full">
+                    {/* <Link onClick={()=> navigate('/admin/user')} /> */}
+                    {/* <Link onClick={()=> navigate('/admin/seating')} /> */}
 
-            
+                    {/* <AdminDash/> */}
+                    {/* <ASubmittedApplications/> */}
+
+                    {/* <AdminSeatingView/> */}
+                    {/* <AdminUsersView/> */}
+
+                    <Outlet/>
+                    
+
+        {/* ------------------------------------------------------------------------------------------------------------------------------------ */}
+        
+            </div>
 
         </section>
     )
 }
+
 
 export default AdminHome

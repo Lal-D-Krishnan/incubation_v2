@@ -44,6 +44,7 @@ const Signup = () => {
             console.log(response.data);
             // console.log(datas);
           }).then(navigate('/signin'))
+          // }).then(navigate('/signin'))
           .catch((err)=>{
             console.log(err.message);
           })
